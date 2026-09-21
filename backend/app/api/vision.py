@@ -5,8 +5,8 @@ from fastapi import (
     HTTPException,
     Form
 )
+from app.services.vision_service import analyze_image
 
-from app.services.gemini_service import analyze_image
 
 
 router = APIRouter(
