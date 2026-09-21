@@ -1,10 +1,10 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 
-from app.services.ocr_service import extract_text
+from app.services.document_service import summarize_document
 
 router = APIRouter(
-    prefix="/ocr",
-    tags=["OCR"]
+    prefix="/document",
+    tags=["Document"]
 )
 
 ALLOWED_TYPES = {
@@ -14,9 +14,10 @@ ALLOWED_TYPES = {
 }
 
 
-@router.post("/extract")
-async def ocr(file: UploadFile = File(...)):
-
+@router.post("/summarize")
+async def summarize(
+    file: UploadFile = File(...)
+):
     if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(
             status_code=400,
@@ -25,12 +26,12 @@ async def ocr(file: UploadFile = File(...)):
 
     image_bytes = await file.read()
 
-    result = await extract_text(image_bytes)
+    result = await summarize_document(
+        image_bytes=image_bytes,
+        mime_type=file.content_type
+    )
 
     return {
-    "filename": file.filename,
-    "text": result,
-    "full_text": " ".join(
-        item["text"] for item in result
-    )
-}
+        "filename": file.filename,
+        "summary": result
+    }
