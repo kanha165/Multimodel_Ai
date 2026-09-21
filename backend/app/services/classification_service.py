@@ -2,24 +2,24 @@ from app.services.gemini_service import analyze_image as gemini_analyze
 from app.services.providers.hf_provider import analyze_image as hf_analyze
 
 
-async def summarize_document(
+async def classify_image(
     image_bytes: bytes,
     mime_type: str
 ):
     question = """
-    Analyze this document image.
+    Identify the main subject in this image.
 
     Provide:
-    1. A short summary
-    2. Main points
-    3. Important names, dates, numbers or facts
+    1. Object/subject name
+    2. Category (plant, animal, product, food, vehicle, person, etc.)
+    3. Short description
+    4. Confidence level: high, medium, or low
 
-    Keep the response clear and structured.
+    If you are not sure, clearly say so.
     """
 
-    # Try Gemini first
     try:
-        print("Trying Gemini for document summary...")
+        print("Trying Gemini for image classification...")
 
         answer = await gemini_analyze(
             image_bytes=image_bytes,
@@ -29,10 +29,9 @@ async def summarize_document(
 
         return {
             "provider": "gemini",
-            "summary": answer
+            "result": answer
         }
 
-    # If Gemini fails, use Hugging Face
     except Exception as gemini_error:
         print(f"Gemini failed: {gemini_error}")
         print("Falling back to Hugging Face...")
@@ -45,5 +44,5 @@ async def summarize_document(
 
         return {
             "provider": "huggingface",
-            "summary": answer
+            "result": answer
         }
