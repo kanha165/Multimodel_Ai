@@ -8,6 +8,10 @@ from app.api.product import router as product_router
 from app.api.plant import router as plant_router
 from app.api.animal import router as animal_router
 from app.api.landmark import router as landmark_router
+from app.api.search import router as search_router
+from app.api.product_search import router as product_search_router
+
+
 
 app = FastAPI(
     title="Multimodal AI Vision API",
@@ -28,4 +32,6 @@ app.include_router(product_router)
 app.include_router(plant_router)
 app.include_router(animal_router)
 app.include_router(landmark_router)
+app.include_router(search_router)
+app.include_router(product_search_router)
 
