@@ -26,7 +26,7 @@ async def analyze_image(
 ):
 
     response = client.chat.completions.create(
-        model="Qwen/Qwen2.5-VL-3B-Instruct",
+        model="zai-org/GLM-4.5V",
         messages=[
             {
                 "role": "user",
