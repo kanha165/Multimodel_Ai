@@ -19,6 +19,7 @@ async def analyze_image(
             detail="Only JPG, PNG and WEBP images are allowed"
         )
 
+
     return {
         "filename": file.filename,
         "content_type": file.content_type,
