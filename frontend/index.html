@@ -442,6 +442,57 @@
     </div>
   </div>
 
+  <!-- WEB SEARCH PANEL -->
+  <div class="panel" id="panel-search">
+    <div class="section-title">🔍 Web Search</div>
+    <div class="section-desc">Search the web using Tavily AI — get clean, relevant results with sources.</div>
+    <div class="card">
+      <div class="form-group">
+        <label>Search Query *</label>
+        <div class="search-row">
+          <input type="text" id="searchQuery" placeholder="e.g. best laptop 2024, how to grow tomatoes..." onkeydown="if(event.key==='Enter') runSearch()" />
+          <button class="btn btn-primary" onclick="runSearch()">🔍 Search</button>
+        </div>
+      </div>
+      <div class="error-msg" id="searchError"></div>
+    </div>
+    <div class="loader" id="searchLoader"><div class="spinner"></div>Searching the web…</div>
+    <div class="result-box" id="searchResult">
+      <div class="result-header"><span class="result-title">Search Results</span><span class="result-badge badge-success" id="searchBadge">Done</span></div>
+      <div id="searchContent"></div>
+    </div>
+  </div>
+
+  <!-- PRODUCT SEARCH PANEL -->
+  <div class="panel" id="panel-psearch">
+    <div class="section-title">🛍 Agentic Product Search</div>
+    <div class="section-desc">Upload a product image and ask where to buy it. The AI identifies the product then searches the web for purchase links.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'psearchFile','psearchPreview')">
+        <div class="upload-icon">🛍️</div>
+        <p><strong>Click or drag</strong> a product image</p>
+        <input type="file" id="psearchFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('psearchFile','psearchPreview')" />
+      </div>
+      <div class="preview-wrap" id="psearchPreview"><img id="psearchPreviewImg" src="" alt="preview" /><div class="preview-name" id="psearchPreviewName"></div></div>
+      <div class="form-group" style="margin-top:1rem">
+        <label>Your question *</label>
+        <input type="text" id="psearchQuestion" placeholder="e.g. Where can I buy this? What is the price?" value="Where can I buy this product and what is the price?" />
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runProductSearch()">🛍 Search Product</button>
+        <button class="btn btn-secondary" onclick="clearForm('psearch')">Clear</button>
+      </div>
+      <div class="error-msg" id="psearchError"></div>
+    </div>
+    <div class="loader" id="psearchLoader"><div class="spinner"></div>Identifying &amp; searching product…</div>
+    <div class="result-box" id="psearchResult">
+      <div class="result-header"><span class="result-title">Product Search Result</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="psearchContent"></div>
+      <button class="json-toggle" onclick="toggleJson('psearchRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="psearchRaw"></div>
+    </div>
+  </div>
+
 </main>
 <footer>Multimodal AI Vision Platform &nbsp;·&nbsp; Powered by Gemini AI &amp; FastAPI</footer>
 <script>
