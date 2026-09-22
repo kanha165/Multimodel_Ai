@@ -496,6 +496,9 @@
 </main>
 <footer>Multimodal AI Vision Platform &nbsp;·&nbsp; Powered by Gemini AI &amp; FastAPI</footer>
 <script>
+  const API = 'http://localhost:8000';
+
+  // ── Panel navigation ──────────────────────────────────────────────────────
   function showPanel(name) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
@@ -505,6 +508,277 @@
     if (btn) btn.classList.add('active');
     document.getElementById('heroSection').style.display = name === 'home' ? 'block' : 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Drag & Drop ───────────────────────────────────────────────────────────
+  function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag'); }
+  function dragLeave(e) { e.currentTarget.classList.remove('drag'); }
+  function dropFile(e, inputId, previewId) {
+    e.preventDefault(); e.currentTarget.classList.remove('drag');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const input = document.getElementById(inputId);
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+    previewImage(inputId, previewId);
+  }
+
+  // ── Image preview ─────────────────────────────────────────────────────────
+  function previewImage(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const wrap  = document.getElementById(previewId);
+    if (!input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById(previewId + 'Img').src = e.target.result;
+      document.getElementById(previewId + 'Name').textContent = input.files[0].name;
+      wrap.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  // ── Clear form ────────────────────────────────────────────────────────────
+  function clearForm(prefix) {
+    const fileEl = document.getElementById(prefix + 'File');
+    if (fileEl) fileEl.value = '';
+    const preview = document.getElementById(prefix + 'Preview');
+    if (preview) preview.style.display = 'none';
+    hide(prefix + 'Result');
+    hide(prefix + 'Error');
+    hide(prefix + 'Loader');
+  }
+
+  // ── UI helpers ────────────────────────────────────────────────────────────
+  function show(id)      { const el=document.getElementById(id); if(el) el.style.display='flex'; }
+  function hide(id)      { const el=document.getElementById(id); if(el) el.style.display='none'; }
+  function showBlock(id) { const el=document.getElementById(id); if(el) el.style.display='block'; }
+  function setError(prefix, msg) { const el=document.getElementById(prefix+'Error'); if(!el) return; el.textContent='⚠️ '+msg; el.style.display='block'; }
+  function toggleJson(id) {
+    const el=document.getElementById(id); const btn=el.previousElementSibling;
+    if(el.style.display==='block'){ el.style.display='none'; btn.textContent='Show raw JSON ▾'; }
+    else { el.style.display='block'; btn.textContent='Hide raw JSON ▴'; }
+  }
+
+  function startLoading(prefix) { hide(prefix+'Result'); hide(prefix+'Error'); show(prefix+'Loader'); }
+  function stopLoading(prefix)  { hide(prefix+'Loader'); }
+
+  // ── Generic image upload ──────────────────────────────────────────────────
+  async function postImage(endpoint, fileId, formData) {
+    const file = document.getElementById(fileId).files[0];
+    if (!file) throw new Error('Please select an image first.');
+    formData.append('file', file);
+    const resp = await fetch(API + endpoint, { method: 'POST', body: formData });
+    if (!resp.ok) { const err = await resp.json().catch(()=>({})); throw new Error(err.detail||'Server error '+resp.status); }
+    return resp.json();
+  }
+
+  // ── HTML escape ───────────────────────────────────────────────────────────
+  function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function section(title, content) {
+    return '<div class="result-section"><h4>'+escHtml(title)+'</h4><p>'+escHtml(String(content||'—'))+'</p></div>';
+  }
+
+  function renderGenericObject(obj, depth) {
+    if (!obj || typeof obj !== 'object') return escHtml(String(obj));
+    depth = depth || 0;
+    let html = '';
+    for (const [k, v] of Object.entries(obj)) {
+      if (v === null || v === undefined) continue;
+      const label = k.replace(/_/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
+      if (typeof v === 'object' && !Array.isArray(v)) {
+        html += '<div class="result-section"><h4>'+label+'</h4>'+renderGenericObject(v,depth+1)+'</div>';
+      } else if (Array.isArray(v)) {
+        if (!v.length) continue;
+        const isSimple = v.every(x => typeof x !== 'object');
+        if (isSimple) {
+          html += '<div class="result-section"><h4>'+label+'</h4><div class="tag-row">'+v.map(t=>'<span class="tag">'+escHtml(String(t))+'</span>').join('')+'</div></div>';
+        } else {
+          html += '<div class="result-section"><h4>'+label+'</h4>'+v.map(x=>'<p style="margin-bottom:.3rem">• '+escHtml(JSON.stringify(x))+'</p>').join('')+'</div>';
+        }
+      } else {
+        html += section(label, v);
+      }
+    }
+    return html;
+  }
+
+  function showResult(prefix, data, renderFn) {
+    document.getElementById(prefix+'Raw').textContent = JSON.stringify(data,null,2);
+    document.getElementById(prefix+'Content').innerHTML = renderFn(data);
+    showBlock(prefix+'Result');
+  }
+
+  // ── MASTER AI ─────────────────────────────────────────────────────────────
+  async function runMaster() {
+    startLoading('master');
+    try {
+      const fd = new FormData();
+      const q  = document.getElementById('masterQuestion').value;
+      if (q) fd.append('question', q);
+      const data = await postImage('/analyze/', 'masterFile', fd);
+      stopLoading('master');
+      showResult('master', data, renderMaster);
+    } catch(e) { stopLoading('master'); setError('master', e.message); }
+  }
+
+  function renderMaster(data) {
+    const r = data.result || {};
+    const type = r.type || 'general';
+    let html = '<span class="type-pill type-'+type+'">'+type+'</span>';
+    if (r.classification) { html += section('Confidence', r.classification.confidence); html += section('Reason', r.classification.reason); }
+    const inner = r.result || r;
+    if (type === 'text' && r.text) {
+      html += '<div class="result-section"><h4>Extracted Text</h4><div class="ocr-text">'+escHtml(r.text)+'</div></div>';
+    } else if (inner && typeof inner === 'object') {
+      html += renderGenericObject(inner);
+    } else if (inner) {
+      html += section('Result', inner);
+    }
+    if (r.ocr && r.ocr.length) {
+      const txt = r.ocr.map(o=>o.text).join(' ');
+      if (txt.trim()) html += '<div class="result-section"><h4>OCR Text Detected</h4><div class="ocr-text">'+escHtml(txt)+'</div></div>';
+    }
+    return html;
+  }
+
+  // ── VISION Q&A ────────────────────────────────────────────────────────────
+  async function runVision() {
+    startLoading('vision');
+    try {
+      const q = document.getElementById('visionQuestion').value.trim();
+      if (!q) throw new Error('Please enter a question.');
+      const fd = new FormData(); fd.append('question', q);
+      const data = await postImage('/vision/analyze', 'visionFile', fd);
+      stopLoading('vision');
+      showResult('vision', data, d => {
+        const ans = d.answer;
+        if (!ans) return renderGenericObject(d);
+        if (typeof ans === 'string') return '<div class="result-section"><h4>Answer</h4><p>'+escHtml(ans)+'</p></div>';
+        if (ans.answer)              return '<div class="result-section"><h4>Answer</h4><p>'+escHtml(ans.answer)+'</p></div>'+renderGenericObject(ans);
+        return renderGenericObject(ans);
+      });
+    } catch(e) { stopLoading('vision'); setError('vision', e.message); }
+  }
+
+  // ── OCR ───────────────────────────────────────────────────────────────────
+  async function runOCR() {
+    startLoading('ocr');
+    try {
+      const data = await postImage('/ocr/extract', 'ocrFile', new FormData());
+      stopLoading('ocr');
+      showResult('ocr', data, d => {
+        let html = '';
+        if (d.full_text) html += '<div class="result-section"><h4>Full Text</h4><div class="ocr-text">'+escHtml(d.full_text)+'</div></div>';
+        if (d.text && d.text.length) {
+          html += '<div class="result-section"><h4>Detected Words ('+d.text.length+')</h4><div class="tag-row">'+d.text.slice(0,60).map(t=>'<span class="tag">'+escHtml(t.text)+'</span>').join('');
+          if (d.text.length > 60) html += '<span class="tag">+' + (d.text.length-60) + ' more</span>';
+          html += '</div></div>';
+        }
+        return html || '<p style="color:var(--muted)">No text found in the image.</p>';
+      });
+    } catch(e) { stopLoading('ocr'); setError('ocr', e.message); }
+  }
+
+  // ── CLASSIFY ──────────────────────────────────────────────────────────────
+  async function runClassify() {
+    startLoading('classify');
+    try {
+      const data = await postImage('/classification/analyze', 'classifyFile', new FormData());
+      stopLoading('classify');
+      showResult('classify', data, d => renderGenericObject(d.classification || d));
+    } catch(e) { stopLoading('classify'); setError('classify', e.message); }
+  }
+
+  // ── PRODUCT ───────────────────────────────────────────────────────────────
+  async function runProduct() {
+    startLoading('product');
+    try {
+      const data = await postImage('/product/identify', 'productFile', new FormData());
+      stopLoading('product');
+      showResult('product', data, d => renderGenericObject(d.product || d));
+    } catch(e) { stopLoading('product'); setError('product', e.message); }
+  }
+
+  // ── PLANT ─────────────────────────────────────────────────────────────────
+  async function runPlant() {
+    startLoading('plant');
+    try {
+      const data = await postImage('/plant/identify', 'plantFile', new FormData());
+      stopLoading('plant');
+      showResult('plant', data, d => renderGenericObject(d.plant || d));
+    } catch(e) { stopLoading('plant'); setError('plant', e.message); }
+  }
+
+  // ── ANIMAL ────────────────────────────────────────────────────────────────
+  async function runAnimal() {
+    startLoading('animal');
+    try {
+      const data = await postImage('/animal/identify', 'animalFile', new FormData());
+      stopLoading('animal');
+      showResult('animal', data, d => renderGenericObject(d.animal || d));
+    } catch(e) { stopLoading('animal'); setError('animal', e.message); }
+  }
+
+  // ── LANDMARK ──────────────────────────────────────────────────────────────
+  async function runLandmark() {
+    startLoading('landmark');
+    try {
+      const data = await postImage('/landmark/identify', 'landmarkFile', new FormData());
+      stopLoading('landmark');
+      showResult('landmark', data, d => renderGenericObject(d.landmark || d));
+    } catch(e) { stopLoading('landmark'); setError('landmark', e.message); }
+  }
+
+  // ── DOCUMENT ──────────────────────────────────────────────────────────────
+  async function runDocument() {
+    startLoading('document');
+    try {
+      const data = await postImage('/document/summarize', 'documentFile', new FormData());
+      stopLoading('document');
+      showResult('document', data, d => renderGenericObject(d.summary || d));
+    } catch(e) { stopLoading('document'); setError('document', e.message); }
+  }
+
+  // ── WEB SEARCH ────────────────────────────────────────────────────────────
+  async function runSearch() {
+    const q = document.getElementById('searchQuery').value.trim();
+    if (!q) { setError('search','Please enter a search query.'); return; }
+    startLoading('search');
+    try {
+      const resp = await fetch(API+'/search/web?q='+encodeURIComponent(q));
+      if (!resp.ok) { const e=await resp.json().catch(()=>({})); throw new Error(e.detail||'Error '+resp.status); }
+      const data = await resp.json();
+      stopLoading('search');
+      document.getElementById('searchBadge').textContent = (data.results||[]).length+' results';
+      const container = document.getElementById('searchContent');
+      if (!data.results || !data.results.length) {
+        container.innerHTML = '<p style="color:var(--muted)">No results found.</p>';
+      } else {
+        container.innerHTML = data.results.map(r =>
+          '<div class="search-result-item"><h4>'+escHtml(r.title||'No title')+'</h4><p>'+escHtml(r.content||r.snippet||'')+'</p>'+(r.url?'<a href="'+escHtml(r.url)+'" target="_blank" rel="noopener">'+escHtml(r.url)+'</a>':'')+'</div>'
+        ).join('');
+      }
+      showBlock('searchResult');
+    } catch(e) { stopLoading('search'); setError('search', e.message); }
+  }
+
+  // ── PRODUCT SEARCH ────────────────────────────────────────────────────────
+  async function runProductSearch() {
+    startLoading('psearch');
+    try {
+      const q = document.getElementById('psearchQuestion').value.trim();
+      if (!q) throw new Error('Please enter a question.');
+      const fd = new FormData(); fd.append('question', q);
+      const data = await postImage('/product/search', 'psearchFile', fd);
+      stopLoading('psearch');
+      showResult('psearch', data, d => {
+        const r = d.result || d;
+        if (typeof r === 'string') return '<div class="result-section"><h4>Result</h4><p>'+escHtml(r)+'</p></div>';
+        return renderGenericObject(r);
+      });
+    } catch(e) { stopLoading('psearch'); setError('psearch', e.message); }
   }
 </script>
 </body>
