@@ -198,7 +198,68 @@
       <div class="tool-card" onclick="showPanel('psearch')"><div class="icon">🛍</div><h3>Product Search</h3><p>Find where to buy any product</p></div>
     </div>
   </div>
-  <!-- other panels coming next -->
+
+  <!-- MASTER AI PANEL -->
+  <div class="panel" id="panel-master">
+    <div class="section-title">🔮 Master AI Analyzer</div>
+    <div class="section-desc">The smartest endpoint — automatically classifies your image and routes it to the best specialist (product, plant, animal, landmark, document, OCR, or general vision).</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'masterFile','masterPreview')">
+        <div class="upload-icon">🖼️</div>
+        <p><strong>Click or drag</strong> an image here</p>
+        <p style="font-size:.78rem;margin-top:.3rem">JPG, PNG, WEBP supported</p>
+        <input type="file" id="masterFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('masterFile','masterPreview')" />
+      </div>
+      <div class="preview-wrap" id="masterPreview"><img id="masterPreviewImg" src="" alt="preview" /><div class="preview-name" id="masterPreviewName"></div></div>
+      <div class="form-group" style="margin-top:1rem">
+        <label>Optional question (leave blank for auto-analysis)</label>
+        <input type="text" id="masterQuestion" placeholder="e.g. What is this product? Where is this place?" />
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:.5rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runMaster()">🚀 Analyze Image</button>
+        <button class="btn btn-secondary" onclick="clearForm('master')">Clear</button>
+      </div>
+      <div class="error-msg" id="masterError"></div>
+    </div>
+    <div class="loader" id="masterLoader"><div class="spinner"></div>Analyzing your image…</div>
+    <div class="result-box" id="masterResult">
+      <div class="result-header"><span class="result-title">Analysis Result</span><span class="result-badge badge-success" id="masterBadge">Done</span></div>
+      <div class="result-content" id="masterContent"></div>
+      <button class="json-toggle" onclick="toggleJson('masterRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="masterRaw"></div>
+    </div>
+  </div>
+
+  <!-- VISION Q&A PANEL -->
+  <div class="panel" id="panel-vision">
+    <div class="section-title">👁 Vision Q&amp;A</div>
+    <div class="section-desc">Ask any question about an image. Powered by Gemini Vision — get detailed, context-aware answers.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'visionFile','visionPreview')">
+        <div class="upload-icon">📷</div>
+        <p><strong>Click or drag</strong> an image here</p>
+        <input type="file" id="visionFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('visionFile','visionPreview')" />
+      </div>
+      <div class="preview-wrap" id="visionPreview"><img id="visionPreviewImg" src="" alt="preview" /><div class="preview-name" id="visionPreviewName"></div></div>
+      <div class="form-group" style="margin-top:1rem">
+        <label>Your question *</label>
+        <textarea id="visionQuestion" placeholder="What is in this image?">What is in this image?</textarea>
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runVision()">👁 Ask Vision AI</button>
+        <button class="btn btn-secondary" onclick="clearForm('vision')">Clear</button>
+      </div>
+      <div class="error-msg" id="visionError"></div>
+    </div>
+    <div class="loader" id="visionLoader"><div class="spinner"></div>Analyzing image…</div>
+    <div class="result-box" id="visionResult">
+      <div class="result-header"><span class="result-title">Vision Answer</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="visionContent"></div>
+      <button class="json-toggle" onclick="toggleJson('visionRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="visionRaw"></div>
+    </div>
+  </div>
+
 </main>
 <footer>Multimodal AI Vision Platform &nbsp;·&nbsp; Powered by Gemini AI &amp; FastAPI</footer>
 <script>
