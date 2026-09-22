@@ -364,6 +364,84 @@
     </div>
   </div>
 
+  <!-- ANIMAL PANEL -->
+  <div class="panel" id="panel-animal">
+    <div class="section-title">🐾 Animal Identification</div>
+    <div class="section-desc">Identify animals and their breeds. Get habitat info, interesting facts and conservation status.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'animalFile','animalPreview')">
+        <div class="upload-icon">🦁</div>
+        <p><strong>Click or drag</strong> an animal image</p>
+        <input type="file" id="animalFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('animalFile','animalPreview')" />
+      </div>
+      <div class="preview-wrap" id="animalPreview"><img id="animalPreviewImg" src="" alt="preview" /><div class="preview-name" id="animalPreviewName"></div></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runAnimal()">🐾 Identify Animal</button>
+        <button class="btn btn-secondary" onclick="clearForm('animal')">Clear</button>
+      </div>
+      <div class="error-msg" id="animalError"></div>
+    </div>
+    <div class="loader" id="animalLoader"><div class="spinner"></div>Identifying animal…</div>
+    <div class="result-box" id="animalResult">
+      <div class="result-header"><span class="result-title">Animal Details</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="animalContent"></div>
+      <button class="json-toggle" onclick="toggleJson('animalRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="animalRaw"></div>
+    </div>
+  </div>
+
+  <!-- LANDMARK PANEL -->
+  <div class="panel" id="panel-landmark">
+    <div class="section-title">🏛 Landmark Identification</div>
+    <div class="section-desc">Identify famous buildings, monuments, tourist attractions and historical places around the world.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'landmarkFile','landmarkPreview')">
+        <div class="upload-icon">🗼</div>
+        <p><strong>Click or drag</strong> a landmark image</p>
+        <input type="file" id="landmarkFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('landmarkFile','landmarkPreview')" />
+      </div>
+      <div class="preview-wrap" id="landmarkPreview"><img id="landmarkPreviewImg" src="" alt="preview" /><div class="preview-name" id="landmarkPreviewName"></div></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runLandmark()">🏛 Identify Landmark</button>
+        <button class="btn btn-secondary" onclick="clearForm('landmark')">Clear</button>
+      </div>
+      <div class="error-msg" id="landmarkError"></div>
+    </div>
+    <div class="loader" id="landmarkLoader"><div class="spinner"></div>Identifying landmark…</div>
+    <div class="result-box" id="landmarkResult">
+      <div class="result-header"><span class="result-title">Landmark Details</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="landmarkContent"></div>
+      <button class="json-toggle" onclick="toggleJson('landmarkRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="landmarkRaw"></div>
+    </div>
+  </div>
+
+  <!-- DOCUMENT PANEL -->
+  <div class="panel" id="panel-document">
+    <div class="section-title">📄 Document Summarizer</div>
+    <div class="section-desc">Summarize documents, forms, certificates, reports, receipts and ID-like papers from an image.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'documentFile','documentPreview')">
+        <div class="upload-icon">📋</div>
+        <p><strong>Click or drag</strong> a document image</p>
+        <input type="file" id="documentFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('documentFile','documentPreview')" />
+      </div>
+      <div class="preview-wrap" id="documentPreview"><img id="documentPreviewImg" src="" alt="preview" /><div class="preview-name" id="documentPreviewName"></div></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runDocument()">📄 Summarize Document</button>
+        <button class="btn btn-secondary" onclick="clearForm('document')">Clear</button>
+      </div>
+      <div class="error-msg" id="documentError"></div>
+    </div>
+    <div class="loader" id="documentLoader"><div class="spinner"></div>Summarizing document…</div>
+    <div class="result-box" id="documentResult">
+      <div class="result-header"><span class="result-title">Document Summary</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="documentContent"></div>
+      <button class="json-toggle" onclick="toggleJson('documentRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="documentRaw"></div>
+    </div>
+  </div>
+
 </main>
 <footer>Multimodal AI Vision Platform &nbsp;·&nbsp; Powered by Gemini AI &amp; FastAPI</footer>
 <script>
