@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.vision import router as vision_router
 from app.api.ocr import router as ocr_router
@@ -18,6 +19,14 @@ from app.api.master import router as master_router
 app = FastAPI(
     title="Multimodal AI Vision API",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/")
