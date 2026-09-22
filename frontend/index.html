@@ -260,6 +260,58 @@
     </div>
   </div>
 
+  <!-- OCR PANEL -->
+  <div class="panel" id="panel-ocr">
+    <div class="section-title">📝 OCR — Text Extraction</div>
+    <div class="section-desc">Extract all text from an image using EasyOCR. Returns individual word positions along with the full text.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'ocrFile','ocrPreview')">
+        <div class="upload-icon">🔡</div>
+        <p><strong>Click or drag</strong> an image with text</p>
+        <input type="file" id="ocrFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('ocrFile','ocrPreview')" />
+      </div>
+      <div class="preview-wrap" id="ocrPreview"><img id="ocrPreviewImg" src="" alt="preview" /><div class="preview-name" id="ocrPreviewName"></div></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runOCR()">📝 Extract Text</button>
+        <button class="btn btn-secondary" onclick="clearForm('ocr')">Clear</button>
+      </div>
+      <div class="error-msg" id="ocrError"></div>
+    </div>
+    <div class="loader" id="ocrLoader"><div class="spinner"></div>Extracting text…</div>
+    <div class="result-box" id="ocrResult">
+      <div class="result-header"><span class="result-title">Extracted Text</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="ocrContent"></div>
+      <button class="json-toggle" onclick="toggleJson('ocrRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="ocrRaw"></div>
+    </div>
+  </div>
+
+  <!-- CLASSIFY PANEL -->
+  <div class="panel" id="panel-classify">
+    <div class="section-title">🏷 Image Classification</div>
+    <div class="section-desc">Classify any image into categories like product, animal, plant, landmark, document, and more.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'classifyFile','classifyPreview')">
+        <div class="upload-icon">🏷️</div>
+        <p><strong>Click or drag</strong> an image to classify</p>
+        <input type="file" id="classifyFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('classifyFile','classifyPreview')" />
+      </div>
+      <div class="preview-wrap" id="classifyPreview"><img id="classifyPreviewImg" src="" alt="preview" /><div class="preview-name" id="classifyPreviewName"></div></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runClassify()">🏷 Classify Image</button>
+        <button class="btn btn-secondary" onclick="clearForm('classify')">Clear</button>
+      </div>
+      <div class="error-msg" id="classifyError"></div>
+    </div>
+    <div class="loader" id="classifyLoader"><div class="spinner"></div>Classifying image…</div>
+    <div class="result-box" id="classifyResult">
+      <div class="result-header"><span class="result-title">Classification Result</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="classifyContent"></div>
+      <button class="json-toggle" onclick="toggleJson('classifyRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="classifyRaw"></div>
+    </div>
+  </div>
+
 </main>
 <footer>Multimodal AI Vision Platform &nbsp;·&nbsp; Powered by Gemini AI &amp; FastAPI</footer>
 <script>
