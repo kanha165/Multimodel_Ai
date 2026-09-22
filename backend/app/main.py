@@ -32,7 +32,22 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {
-        "message": "Multimodal AI Vision API is running"
+        "message": "Multimodal AI Vision API is running",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "endpoints": [
+            "POST /analyze/",
+            "POST /vision/analyze",
+            "POST /ocr/extract",
+            "POST /document/summarize",
+            "POST /classification/analyze",
+            "POST /product/identify",
+            "POST /plant/identify",
+            "POST /animal/identify",
+            "POST /landmark/identify",
+            "GET  /search/web",
+            "POST /product/search"
+        ]
     }
 
 app.include_router(vision_router)
