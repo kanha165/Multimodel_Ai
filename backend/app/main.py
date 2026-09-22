@@ -10,6 +10,8 @@ from app.api.animal import router as animal_router
 from app.api.landmark import router as landmark_router
 from app.api.search import router as search_router
 from app.api.product_search import router as product_search_router
+from app.api.master import router as master_router
+
 
 
 
@@ -34,4 +36,5 @@ app.include_router(animal_router)
 app.include_router(landmark_router)
 app.include_router(search_router)
 app.include_router(product_search_router)
+app.include_router(master_router)
 
