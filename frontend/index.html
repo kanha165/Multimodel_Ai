@@ -312,6 +312,58 @@
     </div>
   </div>
 
+  <!-- PRODUCT PANEL -->
+  <div class="panel" id="panel-product">
+    <div class="section-title">🛒 Product Identification</div>
+    <div class="section-desc">Identify commercial products — get name, brand, price range, category and buying suggestions.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'productFile','productPreview')">
+        <div class="upload-icon">🛒</div>
+        <p><strong>Click or drag</strong> a product image</p>
+        <input type="file" id="productFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('productFile','productPreview')" />
+      </div>
+      <div class="preview-wrap" id="productPreview"><img id="productPreviewImg" src="" alt="preview" /><div class="preview-name" id="productPreviewName"></div></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runProduct()">🛒 Identify Product</button>
+        <button class="btn btn-secondary" onclick="clearForm('product')">Clear</button>
+      </div>
+      <div class="error-msg" id="productError"></div>
+    </div>
+    <div class="loader" id="productLoader"><div class="spinner"></div>Identifying product…</div>
+    <div class="result-box" id="productResult">
+      <div class="result-header"><span class="result-title">Product Details</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="productContent"></div>
+      <button class="json-toggle" onclick="toggleJson('productRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="productRaw"></div>
+    </div>
+  </div>
+
+  <!-- PLANT PANEL -->
+  <div class="panel" id="panel-plant">
+    <div class="section-title">🌿 Plant Identification</div>
+    <div class="section-desc">Identify plants, flowers and trees. Get scientific name, care tips, toxicity info and more.</div>
+    <div class="card">
+      <div class="upload-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event,'plantFile','plantPreview')">
+        <div class="upload-icon">🌱</div>
+        <p><strong>Click or drag</strong> a plant image</p>
+        <input type="file" id="plantFile" accept="image/jpeg,image/png,image/webp" onchange="previewImage('plantFile','plantPreview')" />
+      </div>
+      <div class="preview-wrap" id="plantPreview"><img id="plantPreviewImg" src="" alt="preview" /><div class="preview-name" id="plantPreviewName"></div></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="runPlant()">🌿 Identify Plant</button>
+        <button class="btn btn-secondary" onclick="clearForm('plant')">Clear</button>
+      </div>
+      <div class="error-msg" id="plantError"></div>
+    </div>
+    <div class="loader" id="plantLoader"><div class="spinner"></div>Identifying plant…</div>
+    <div class="result-box" id="plantResult">
+      <div class="result-header"><span class="result-title">Plant Details</span><span class="result-badge badge-success">Done</span></div>
+      <div class="result-content" id="plantContent"></div>
+      <button class="json-toggle" onclick="toggleJson('plantRaw')">Show raw JSON ▾</button>
+      <div class="raw-json" id="plantRaw"></div>
+    </div>
+  </div>
+
 </main>
 <footer>Multimodal AI Vision Platform &nbsp;·&nbsp; Powered by Gemini AI &amp; FastAPI</footer>
 <script>
