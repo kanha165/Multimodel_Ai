@@ -1,14 +1,23 @@
-import easyocr
-import numpy as np
-from PIL import Image
 import io
+from PIL import Image
 
+_reader = None
 
-# OCR model load
-reader = easyocr.Reader(["en"])
+def get_reader():
+    global _reader
+    if _reader is None:
+        import easyocr
+        _reader = easyocr.Reader(["en"])
+    return _reader
 
 
 async def extract_text(image_bytes: bytes):
+    try:
+        import numpy as np
+        reader = get_reader()
+    except Exception as e:
+        raise RuntimeError(f"OCR service unavailable: {str(e)}")
+
     # Convert bytes to image
     image = Image.open(
         io.BytesIO(image_bytes)
@@ -24,9 +33,7 @@ async def extract_text(image_bytes: bytes):
 
     # Filter low-confidence / empty results
     for _, text, confidence in results:
-
         if confidence >= 0.5 and text.strip():
-
             texts.append({
                 "text": text.strip(),
                 "confidence": round(
