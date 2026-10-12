@@ -44,3 +44,14 @@ htmlcov/
 
 # Node (if ever needed)
 node_modules/
+
+# Python virtual environments (all locations)
+venv/
+.venv/
+**/venv/
+**/.venv/
+
+# Compiled Python files (all locations)
+**/__pycache__/
+**/*.pyc
+**/*.pyo
