@@ -72,6 +72,6 @@ Multimodel_Ai/
 
 ## API Documentation
 
-Once the backend is running, visit:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+- **Live Deployed API**: `https://multimodel-ai-xy20.onrender.com`
+- Swagger UI: `https://multimodel-ai-xy20.onrender.com/docs` (or local `http://localhost:8000/docs`)
+- ReDoc: `https://multimodel-ai-xy20.onrender.com/redoc` (or local `http://localhost:8000/redoc`)

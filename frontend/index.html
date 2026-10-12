@@ -2410,8 +2410,8 @@
         <strong>Multimodal AI Vision Studio</strong> &nbsp;·&nbsp; Powered by Google Gemini AI &amp; FastAPI
       </div>
       <div class="footer-links">
-        <a href="http://localhost:8000/docs" target="_blank" rel="noopener">Interactive API Docs</a>
-        <a href="http://localhost:8000/redoc" target="_blank" rel="noopener">ReDoc</a>
+        <a href="https://multimodel-ai-xy20.onrender.com/docs" target="_blank" rel="noopener">Interactive API Docs</a>
+        <a href="https://multimodel-ai-xy20.onrender.com/redoc" target="_blank" rel="noopener">ReDoc</a>
         <a href="#" onclick="showPanel('home'); return false;">Home</a>
       </div>
     </div>
@@ -2421,7 +2421,7 @@
        APPLICATION LOGIC & BACKEND INTEGRATION (100% PRESERVED & ENHANCED)
        ======================================================================== -->
   <script>
-    const API = 'http://localhost:8000';
+    const API = 'https://multimodel-ai-xy20.onrender.com';
 
     // ── Health Check Indicator ────────────────────────────────────────────────
     async function checkBackendHealth() {
@@ -2430,7 +2430,7 @@
       try {
         text.textContent = 'Pinging…';
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2500);
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
         const resp = await fetch(API + '/', { signal: controller.signal });
         clearTimeout(timeoutId);
         if (resp.ok) {
@@ -2442,7 +2442,7 @@
         }
       } catch (err) {
         dot.className = 'status-dot offline';
-        text.textContent = 'API Offline (Port 8000)';
+        text.textContent = 'API Offline';
       }
     }
 
